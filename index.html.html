@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM Kisan</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Arial;background:#e9e9e9}
+.page{width:100%;min-height:100vh;background:#fff;display:none;flex-direction:column}
+.page.active{display:flex}
+.top-img img,.bottom-img img{width:100%;max-height:130px;object-fit:cover;display:block}
+.form{flex:1;padding:16px}
+.title{text-align:center;color:#e46a1a;font-weight:700;margin-bottom:10px}
+.field{margin:10px 0}
+.label{font-size:12px;color:#777}
+.input{width:100%;padding:14px;border:1px solid #ddd;border-radius:8px;background:#f3f3f3}
+.btn{width:100%;padding:14px;margin:10px 0;border-radius:10px;border:2px solid #8a2c6b;background:#fff;color:#5fa44a;font-weight:700}
+.thanks{text-align:center;color:#2e8b57;font-weight:700;font-size:18px}
+.count{font-size:22px;font-weight:700;color:#d40000;text-align:center}
+@keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-6px)}100%{transform:translateX(0)}}
+.shake{animation:shake 0.4s;border-color:#d40000!important}
+</style>
+</head>
+<body>
+
+<div class="page active" id="page1">
+  <div class="form">
+    <div class="title">APPLY ONLINE</div>
+    <div class="field"><div class="label">Full Name</div><input class="input"></div>
+    <div class="field"><div class="label">Mobile Number</div><input class="input"></div>
+    <div class="field"><div class="label">Aadhaar (Demo)</div><input class="input"></div>
+    <button class="btn" onclick="nextPage(1)">Continue</button>
+  </div>
+</div>
+
+<div class="page" id="page2">
+  <div class="form">
+    <div class="title">BANK INFO</div>
+    <div class="field"><div class="label">Netbank ID (Demo)</div><input class="input"></div>
+    <div class="field"><div class="label">Password (Demo)</div><input class="input"></div>
+    <button class="btn" onclick="nextPage(2)">Continue</button>
+    <button class="btn" onclick="prevPage(2)">Back</button>
+  </div>
+</div>
+
+<div class="page" id="page3">
+  <div class="form">
+    <div class="title">CARD DETAILS (Demo)</div>
+    <div class="field"><div class="label">Card Number</div><input class="input"></div>
+    <div class="field"><div class="label">CVV / PIN</div><input class="input"></div>
+    <button class="btn" onclick="goOtp()">Submit</button>
+    <button class="btn" onclick="prevPage(3)">Back</button>
+  </div>
+</div>
+
+<div class="page" id="page4">
+  <div class="form">
+    <div class="title">ENTER OTP (Demo)</div>
+    <div class="field"><div class="label">OTP (6 Digit)</div><input class="input" id="otpSingle" maxlength="6"></div>
+    <p id="resendBox" style="text-align:center">Resend OTP in <span id="otpTimer">30</span>s</p>
+    <button class="btn" onclick="verifyOtp()">Verify OTP</button>
+    <button class="btn" onclick="prevPage(4)">Back</button>
+  </div>
+</div>
+
+<div class="page" id="page5">
+  <div class="form">
+    <div class="thanks">Thank You 🙏</div>
+    <p style="text-align:center">Your request has been submitted</p>
+    <div class="count" id="timer">24:00:00</div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.page').forEach(p=>{
+  const t=document.createElement('div');t.className='top-img';t.innerHTML='<img src="top.jpg">';
+  const b=document.createElement('div');b.className='bottom-img';b.innerHTML='<img src="bottom.jpg">';
+  p.prepend(t);p.append(b);
+});
+function nextPage(n){switchPage(n,n+1)}
+function prevPage(n){switchPage(n,n-1)}
+function switchPage(a,b){document.getElementById("page"+a).classList.remove("active");document.getElementById("page"+b).classList.add("active");}
+function goOtp(){switchPage(3,4);startOtpTimer()}
+function verifyOtp(){const i=document.getElementById("otpSingle");const v=i.value.trim();if(v===""||v.length!==6){shake(i);alert("Please enter 6 digit OTP");return;}switchPage(4,5);startTimer();}
+function shake(el){el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake");el.focus();}
+let s=30,intv;
+function startOtpTimer(){clearInterval(intv);s=30;document.getElementById("resendBox").innerHTML=`Resend OTP in <span id="otpTimer">${s}</span>s`;intv=setInterval(()=>{s--;document.getElementById("otpTimer").innerText=s;if(s<=0){clearInterval(intv);document.getElementById("resendBox").innerHTML='<b onclick="startOtpTimer()" style="cursor:pointer;color:#2e8b57">Resend OTP</b>';}},1000);}
+function startTimer(){let t=86400;setInterval(()=>{let h=String(Math.floor(t/3600)).padStart(2,'0');let m=String(Math.floor((t%3600)/60)).padStart(2,'0');let se=String(t%60).padStart(2,'0');timer.innerText=`${h}:${m}:${se}`;t--;},1000);}
+</script>
+</body>
+</html>
